@@ -413,12 +413,13 @@ variables with missing values are included). I have also made a plot
 ``` r
 # Plotting the count of missing values per variables(with missing values)
 
-missing.values %>%
+graphOfMissingValues <- missing.values %>%
   ggplot() +
     geom_bar(aes(x=variable, y=num.missing.values), stat = "identity") +
     labs(x='variable', y="number of missing values", 
          title='Number of missing values') +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+print(graphOfMissingValues)
 ```
 
 ![](MiniDataAnalysis1_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->  
