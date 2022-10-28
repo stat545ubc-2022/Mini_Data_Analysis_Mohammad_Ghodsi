@@ -2,7 +2,7 @@
 title: "MiniDataAnalysis2"
 author: "Mohammad Ghodsi"
 date: "2022-10-27"
-output: html_document
+output: github_document  
 ---
 *To complete this milestone, you can edit [this `.rmd` file](https://raw.githubusercontent.com/UBC-STAT/stat545.stat.ubc.ca/master/content/mini-project/mini-project-2.Rmd) directly. Fill in the sections that are commented out with `<!--- start your work here--->`. When you are done, make sure to knit to an `.md` file by changing the output in the YAML header to `github_document`, before submitting a tagged release on canvas.*
 
@@ -102,7 +102,7 @@ After tidying back up:
 ```{r}
 # untidy data is re-tidy-ed so that there is only one column with the variables pertaining to root_barrier
 
-(tidy_ed <- untidy %>% 
+glimpse(tidy_ed <- untidy %>% 
  pivot_longer(cols = starts_with("root_barrier"), names_to = "naam", values_to = "Root_Barrier" ) %>% 
    select(!"naam") %>% 
    distinct(tree_id, .keep_all = TRUE))
@@ -125,7 +125,7 @@ Now, you should be more familiar with your data, and also have made progress in 
 Explain your decision for choosing the above two research questions.
 
 <!--------------------------- Start your work below --------------------------->
-These two questions are chosen because they are 1) they have a straight forward objective, 2) they are correlated, as in they serve the theme of measuring the growth of the trees, 3) the dataset's tidyness serve them best.
+These two questions are chosen because 1)they have a straight forward objective, 2) they are correlated, as in they serve the theme of measuring the growth of the trees, 3) the dataset's tidyness serve them best.
 <!----------------------------------------------------------------------------->
 
 Now, try to choose a version of your data that you think will be appropriate to answer these 2 questions. Use between 4 and 8 functions that we've covered so far (i.e. by filtering, cleaning, tidy'ing, dropping irrelevant columns, etc.).
@@ -183,7 +183,7 @@ Now, choose two of the following tasks.
 
 **Task Number**: Task 1
 
-The height_range_id is in a character form, and the plot represents it in alphabetical order. Here, I have changed it into factor for in order to have the numbers show up in increasing order.
+The height_range_id is in a character form, and the plot represents it in alphabetical order. Here, I have changed it into factor for in order to arrange the groups and have the numbers show up in increasing order.
 ```{r}
 fact1_trees_height <- tree_age_barrier %>%
   mutate(height_range_id = factor(case_when(height_range_id== "1" ~ "1", height_range_id== "2" ~ "2", height_range_id == "3" ~ "3", height_range_id == "4" ~ "4", height_range_id == "5" ~ "5", height_range_id == "6" ~ "6", height_range_id == "7" ~ "7", height_range_id == "8" ~ "8", height_range_id == "9" ~ "9", height_range_id == "10" ~ "10"), levels = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")))
@@ -235,9 +235,9 @@ Pick a research question, and pick a variable of interest (we'll call it "Y") th
 
 <!-------------------------- Start your work below ---------------------------->
 
-**Research Question**: Is there a correlation between the age and diameter of a tree
+**Research Question**: Is there a correlation between the age and diameter of a tree?
 
-**Variable of interest**: diameter, age
+**Variable of interest**: age
 
 <!----------------------------------------------------------------------------->
 
@@ -255,7 +255,8 @@ Fit a model or run a hypothesis test that provides insight on this variable with
 Here I am fitting a model that makes predictions on age using diameter, by using the lm() function
 
 ```{r}
-(mu_lm <- lm(age ~ diameter, tree_age_barrier))
+mu_lm <- lm(age ~ diameter, tree_age_barrier)
+print(mu_lm)
 ```
 
 
@@ -290,6 +291,24 @@ Take a summary table that you made from Milestone 1 (Task 4.2), and write it as 
 -   **Reproducibility criteria**: You should be able to delete the csv file, and remake it simply by knitting this Rmd file.
 
 <!-------------------------- Start your work below ---------------------------->
+Summary tibble from Milestone 1:
+```{r}
+(diameter_stat <- vancouver_trees %>% 
+  group_by(height_range_id) %>% 
+  summarise(mean_diameter = mean(diameter, na.rm=T),
+         diameter_range = (max(diameter)-min(diameter)),
+         diameter_standard_dev = sd(diameter, na.rm=T),
+         diameter_CV = (sd(diameter, na.rm=T)/mean(diameter, na.rm=T)*100),
+         number_of_samples = n()))
+```
+
+This code Creates a CSV file of the above tibble in the "output" folder on the project directory using here() function
+```{r}
+library(here)
+
+write_csv(diameter_stat, here("output", "Summary_Tibble_MilStn1_DmtrSt.csv"))
+```
+
 
 <!----------------------------------------------------------------------------->
 
@@ -300,6 +319,13 @@ Write your model object from Task 3 to an R binary file (an RDS), and load it ag
 -   The same robustness and reproducibility criteria as in 3.1 apply here.
 
 <!-------------------------- Start your work below ---------------------------->
+```{r}
+#this code saves the summary tibble as R binary file on "output" folder on the project directory
+saveRDS(diameter_stat, here("output", "Summary_Tibble_MilStn1_DmtrSt.rds"))
+
+#this code reads the R binary file on "output" folder on the project directory
+(readRDS(here("output", "Summary_Tibble_MilStn1_DmtrSt.rds")))
+```
 
 <!----------------------------------------------------------------------------->
 
